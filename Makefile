@@ -10,11 +10,7 @@ TEST_DIR = tests
 
 SRCS = $(SRC_DIR)/capture.c \
        $(SRC_DIR)/parser.c \
-       $(SRC_DIR)/filter.c \
-       $(SRC_DIR)/display.c \
-       $(SRC_DIR)/stats.c \
-       $(SRC_DIR)/detector.c \
-       $(SRC_DIR)/console.c
+       $(SRC_DIR)/display.c
 
 OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 MAIN_OBJ = $(OBJ_DIR)/main.o
@@ -50,7 +46,7 @@ test: $(TEST_TARGET)
 
 run: $(TARGET)
 	@echo "Running NetSnoop against sample PCAP..."
-	./$(TARGET) -r samples/sample_traffic.pcap -v
+	./$(TARGET) -r samples/sample_traffic.pcap
 
 clean:
 	rm -rf $(OBJ_DIR) $(BIN_DIR) netsnoop.log

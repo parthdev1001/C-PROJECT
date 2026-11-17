@@ -5,8 +5,6 @@
 #include <arpa/inet.h>
 #include "types.h"
 #include "parser.h"
-#include "filter.h"
-#include "stats.h"
 
 static void test_ethernet_and_ip_tcp(void) {
     /* Construct a synthetic Ethernet + IPv4 + TCP packet */
@@ -71,12 +69,11 @@ static void test_ethernet_and_ip_tcp(void) {
     assert(pkt.tcp_seq == 100000);
     assert(pkt.tcp_flags == TCP_FLAG_SYN);
     assert(strcmp(pkt.tcp_flags_str, "[SYN]") == 0);
-    assert(pkt.app_proto == APP_HTTPS);
 
     printf("  [PASS] Ethernet + IPv4 + TCP parsing test passed.\n");
 }
 
-static void test_udp_and_filter(void) {
+static void test_udp(void) {
     uint8_t packet[42];
     memset(packet, 0, sizeof(packet));
 
@@ -105,32 +102,10 @@ static void test_udp_and_filter(void) {
     assert(pkt.transport == PROTO_UDP);
     assert(pkt.src_port == 53535);
     assert(pkt.dest_port == 53);
-    assert(pkt.app_proto == APP_DNS);
-
-    /* Test Filter */
-    PacketFilter filter;
-    filter_init(&filter);
-    assert(filter_match(&filter, &pkt) == 1);
-
-    filter_set_protocol(&filter, "TCP");
-    assert(filter_match(&filter, &pkt) == 0);
-
-    filter_set_protocol(&filter, "UDP");
-    assert(filter_match(&filter, &pkt) == 1);
-
-    filter_set_protocol(&filter, "DNS");
-    assert(filter_match(&filter, &pkt) == 1);
-
-    filter_set_port(&filter, 53);
-    assert(filter_match(&filter, &pkt) == 1);
-
-    filter_set_port(&filter, 80);
-    assert(filter_match(&filter, &pkt) == 0);
-
-    printf("  [PASS] UDP & Filter matching test passed.\n");
+    printf("  [PASS] UDP parsing test passed.\n");
 }
 
-static void test_icmp_and_stats(void) {
+static void test_icmp(void) {
     uint8_t packet[42];
     memset(packet, 0, sizeof(packet));
 
@@ -159,21 +134,14 @@ static void test_icmp_and_stats(void) {
     assert(pkt.icmp_type == 8);
     assert(strcmp(pkt.icmp_type_str, "Echo Request") == 0);
 
-    PacketStats stats;
-    stats_init(&stats);
-    stats_update(&stats, &pkt);
-    assert(stats.total_packets == 1);
-    assert(stats.total_bytes == 64);
-    assert(stats.icmp_count == 1);
-
-    printf("  [PASS] ICMP & Statistics test passed.\n");
+    printf("  [PASS] ICMP parsing test passed.\n");
 }
 
 int main(void) {
     printf("\n=== Running NetSnoop Unit Tests ===\n");
     test_ethernet_and_ip_tcp();
-    test_udp_and_filter();
-    test_icmp_and_stats();
+    test_udp();
+    test_icmp();
     printf("=== All NetSnoop Unit Tests Passed Successfully! ===\n\n");
     return 0;
 }

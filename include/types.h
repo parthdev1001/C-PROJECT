@@ -85,14 +85,6 @@ typedef enum {
     PROTO_OTHER
 } TransportProto;
 
-typedef enum {
-    APP_NONE = 0,
-    APP_HTTP,
-    APP_HTTPS,
-    APP_DNS,
-    APP_OTHER
-} AppProto;
-
 /* Unified parsed representation */
 typedef struct {
     struct timeval timestamp;
@@ -137,40 +129,9 @@ typedef struct {
     uint8_t icmp_code;
     const char *icmp_type_str;
 
-    /* Application layer inference */
-    AppProto app_proto;
-    const char *app_str;
-
-    /* Payload */
+    /* Remaining bytes after the parsed headers */
     const uint8_t *payload;
     uint32_t payload_len;
 } ParsedPacket;
-
-/* Packet filter configuration */
-typedef struct {
-    int active;
-    char protocol[16];   /* "ALL", "TCP", "UDP", "ICMP", "HTTP", "DNS" */
-    uint16_t port;       /* 0 = any */
-    char src_ip[16];     /* "" = any */
-    char dest_ip[16];    /* "" = any */
-} PacketFilter;
-
-/* Statistics accumulator */
-typedef struct {
-    struct timeval start_time;
-    struct timeval last_time;
-    uint64_t total_packets;
-    uint64_t total_bytes;
-    uint64_t tcp_count;
-    uint64_t udp_count;
-    uint64_t icmp_count;
-    uint64_t other_count;
-    uint64_t http_count;
-    uint64_t https_count;
-    uint64_t dns_count;
-    uint64_t syn_count;
-    uint64_t fin_count;
-    uint64_t rst_count;
-} PacketStats;
 
 #endif /* NETSNOOP_TYPES_H */

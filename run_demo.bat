@@ -1,7 +1,7 @@
 @echo off
-title NetSnoop - Interactive Packet Sniffer Console
+title NetSnoop - Simple Packet Sniffer
 echo =================================================================
-echo   NetSnoop - Interactive Packet Sniffer & Protocol Analyzer
+echo   NetSnoop - Simple Packet Sniffer
 echo =================================================================
-wsl -d Ubuntu -e sh -c "cd '/mnt/c/Users/Parth/Desktop/C LANGUAGE PROJECT' && make all && ./bin/netsnoop"
+wsl -d Ubuntu --cd "%~dp0" sh -c "make all && ./bin/netsnoop -r samples/sample_traffic.pcap"
 pause

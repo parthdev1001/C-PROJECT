@@ -92,19 +92,6 @@ int parse_tcp(const u_char *buffer, int size, ParsedPacket *pkt) {
 
     pkt->transport = PROTO_TCP;
 
-    /* Detect common applications */
-    if (pkt->src_port == 80 || pkt->dest_port == 80 ||
-        pkt->src_port == 8080 || pkt->dest_port == 8080) {
-        pkt->app_proto = APP_HTTP;
-        pkt->app_str = "HTTP";
-    } else if (pkt->src_port == 443 || pkt->dest_port == 443) {
-        pkt->app_proto = APP_HTTPS;
-        pkt->app_str = "HTTPS";
-    } else if (pkt->src_port == 53 || pkt->dest_port == 53) {
-        pkt->app_proto = APP_DNS;
-        pkt->app_str = "DNS";
-    }
-
     return pkt->tcp_header_len;
 }
 
@@ -117,18 +104,6 @@ int parse_udp(const u_char *buffer, int size, ParsedPacket *pkt) {
     pkt->dest_port = ntohs(udp->dest_port);
     pkt->udp_length = ntohs(udp->length);
     pkt->transport = PROTO_UDP;
-
-    if (pkt->src_port == 53 || pkt->dest_port == 53) {
-        pkt->app_proto = APP_DNS;
-        pkt->app_str = "DNS";
-    } else if (pkt->src_port == 67 || pkt->dest_port == 67 ||
-               pkt->src_port == 68 || pkt->dest_port == 68) {
-        pkt->app_proto = APP_OTHER;
-        pkt->app_str = "DHCP";
-    } else if (pkt->src_port == 123 || pkt->dest_port == 123) {
-        pkt->app_proto = APP_OTHER;
-        pkt->app_str = "NTP";
-    }
 
     return sizeof(UDPHeader);
 }
